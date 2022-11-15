@@ -20,11 +20,8 @@ class AlbumsModel {
 
     function getFiltro($sort, $order){
 
-        $query = $this->db->prepare( "SELECT * FROM album ORDER BY  $sort $order ");
+        $query = $this->db->prepare( "SELECT * FROM album ORDER BY $sort $order");
         $query->execute();
-        
-        $num_filas = $query->rowcount();
-        $paginas = ceil($num_filas / $offset); 
         $albums = $query->fetchAll(PDO::FETCH_OBJ);
 
         echo($sort);

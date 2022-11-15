@@ -24,16 +24,19 @@ class ApiAlbumController{
         
         //filtro de albums
         if(isset($_GET['search'])){
-            echo($_GET['search']);
             $search = $_GET['search'];
             $albums = $this->model->search($search);
-            return $this->view->response($albums, 200);
+            if(!empty($albums)){
+                return $this->view->response($albums, 200);
+            }else{
+                return $this->view->response('Resultado no encontrado', 204);
+            }
         }
         //ordenamiento
         else if(isset($_GET['sort'] )){
             $sort = $_GET['sort'];
             $order = "ASC";
-            if($_GET['order']){
+            if(isset($_GET['order'])){
                 $order = $_GET['order'];
             }
             $albums = $this->model->getFiltro($sort, $order);
@@ -52,7 +55,7 @@ class ApiAlbumController{
             if($album){
                 return $this->view->response($album, 200);
             }else{
-                return $this->view->response('Error', 404);
+                return $this->view->response('Error, Not found', 404);
             }
         }
         else{
@@ -68,7 +71,7 @@ class ApiAlbumController{
             $this->model->delete($id);
             return $this->view->response("Album con id: " .  $params[':ID'] . " eliminado" , 200);
         }else{
-            return $this->view->response("Album con id: " .  $params[':ID'] . " no existe" , 404);
+            return $this->view->response("Album con id: " .  $params[':ID'] . " Error, Not found" , 404);
         } 
     }
 
