@@ -89,7 +89,7 @@ class ApiAlbumController {
                 $album = $this->model->getAlbum($id);
                 return $this->view->response("Album con id: " . $id . " creado " , 201);
             }
-        }else {return $this->view->response('sin autorizcion', 401);}
+        }else {return $this->view->response('sin autorizcion', 403);}
     }
 
     function modify($params = null){
@@ -102,7 +102,7 @@ class ApiAlbumController {
                 $album = $this->model->getAlbum($album->id);
                 return $this->view->response("Album con id: " . $album->id . " editado " , 200);
             }
-        }else {return $this->view->response('sin autorizcion', 401);}
+        }else {return $this->view->response('sin autorizcion', 403);}
     }
     
     
