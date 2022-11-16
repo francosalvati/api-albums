@@ -71,10 +71,10 @@ class ApiAlbumController {
         $id = $params[':ID'];
         if(!$this->hasSongs($id)){
              if($this->model->getAlbum($id)){
-                 $this->model->delete($id);
-                 return $this->view->response("Album con id: " .  $params[':ID'] . " eliminado" , 200);
+                    $this->model->delete($id);
+                    return $this->view->response("Album con id: " .  $params[':ID'] . " eliminado" , 200);
              }else{
-                 return $this->view->response("Album con id: " .  $params[':ID'] . " Error, Not found" , 404);
+                    return $this->view->response("Album con id: " .  $params[':ID'] . " Error, Not found" , 404);
              } 
         }else{return $this->view->response("Album con id: " .  $params[':ID'] . " tiene canciones" , 400);}
     }
@@ -94,14 +94,17 @@ class ApiAlbumController {
 
     function modify($params = null){
         if($this->helper->isLoggedIn()){
-        $album = $this->getData();
-            if (empty($album->nombre) || empty( $album->banda) || empty($album->genero) || empty($album->anio) || empty($album->cant_canciones) || empty($album->imgURL)) {
-                $this->view->response("Complete todos los datos", 400);
-            }else{
-                $this->model->modify($album->nombre, $album->banda, $album->genero, $album->anio, $album->cant_canciones, $album->imgURL, $album->id);
-                $album = $this->model->getAlbum($album->id);
-                return $this->view->response("Album con id: " . $album->id . " editado " , 200);
-            }
+            $id = $params[':ID'];
+            $album = $this->getData();
+                if (empty($album->nombre) || empty( $album->banda) || empty($album->genero) || empty($album->anio) || empty($album->cant_canciones) || empty($album->imgURL)) {
+                    $this->view->response("Complete todos los datos", 400);
+                }else if($this->model->getAlbum($id)){
+                    $this->model->modify($album->nombre, $album->banda, $album->genero, $album->anio, $album->cant_canciones, $album->imgURL, $params[':ID']);
+                    $album = $this->model->getAlbum($params[':ID']);
+                    return $this->view->response("Album con id: " . $params[':ID'] . " editado " , 200);
+                }else{
+                    return $this->view->response("Album con id: " .  $params[':ID'] . " Error, Not found" , 404);
+                }
         }else {return $this->view->response('sin autorizcion', 403);}
     }
     
