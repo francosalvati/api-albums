@@ -2,18 +2,21 @@
 
 require_once './api/models/albumsModel.php';
 require_once './api/views/apiView.php';
+require_once './api/helpers/authHelper.php';
 
 
-class ApiAlbumController{
+class ApiAlbumController {
     
     private $model; 
     private $view;
+    private $data;
+    private $helper;
 
     function __construct(){
         $this->model = new AlbumsModel();
         $this->view = new ApiView();
+        $this->helper = new AuthHelper();
         $this->data = file_get_contents("php://input"); 
-
     }
     
     private function getData() {
@@ -64,15 +67,52 @@ class ApiAlbumController{
         }  
     } 
     
-
     function delete($params){
         $id = $params[':ID'];
-        if($this->model->getAlbum($id)){
-            $this->model->delete($id);
-            return $this->view->response("Album con id: " .  $params[':ID'] . " eliminado" , 200);
-        }else{
-            return $this->view->response("Album con id: " .  $params[':ID'] . " Error, Not found" , 404);
-        } 
+        if(!$this->hasSongs($id)){
+             if($this->model->getAlbum($id)){
+                 $this->model->delete($id);
+                 return $this->view->response("Album con id: " .  $params[':ID'] . " eliminado" , 200);
+             }else{
+                 return $this->view->response("Album con id: " .  $params[':ID'] . " Error, Not found" , 404);
+             } 
+        }else{return $this->view->response("Album con id: " .  $params[':ID'] . " tiene canciones" , 400);}
+    }
+
+    function insert($params = null){
+        if($this->helper->isLoggedIn()){
+            $album = $this->getData();
+            if (empty($album->nombre) || empty( $album->banda) || empty($album->genero) || empty($album->anio) || empty($album->cant_canciones) || empty($album->imgURL)) {
+                $this->view->response("Complete todos los datos", 400);
+            }else{
+                $id = $this->model->insert($album->nombre, $album->banda, $album->genero, $album->anio, $album->cant_canciones, $album->imgURL);
+                $album = $this->model->getAlbum($id);
+                return $this->view->response("Album con id: " . $id . " creado " , 201);
+            }
+        }else {return $this->view->response('sin autorizcion', 401);}
+    }
+
+    function modify($params = null){
+        if($this->helper->isLoggedIn()){
+        $album = $this->getData();
+            if (empty($album->nombre) || empty( $album->banda) || empty($album->genero) || empty($album->anio) || empty($album->cant_canciones) || empty($album->imgURL)) {
+                $this->view->response("Complete todos los datos", 400);
+            }else{
+                $this->model->modify($album->nombre, $album->banda, $album->genero, $album->anio, $album->cant_canciones, $album->imgURL, $album->id);
+                $album = $this->model->getAlbum($album->id);
+                return $this->view->response("Album con id: " . $album->id . " editado " , 200);
+            }
+        }else {return $this->view->response('sin autorizcion', 401);}
+    }
+    
+    
+    function hasSongs($idAlbum) {
+        $songs = $this->model->getFromAlbum($idAlbum);
+        if (count($songs) != 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     function setLimit()
@@ -86,8 +126,7 @@ class ApiAlbumController{
         return $limit;
     }
 
-    function setPages($limit)
-    {
+    function setPages($limit){
         if (isset($_GET['page'])) {
             $page = $_GET['page'];
             $page = ($limit * $page) - $limit;

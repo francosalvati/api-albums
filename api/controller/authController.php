@@ -62,7 +62,6 @@ class AuthController{
         }
     }
 
-
     function getUsuario($params = null){
         $id = $params[':ID'];
         $user = $this->authHelper->authToken();
@@ -75,50 +74,6 @@ class AuthController{
         else{
             $this->view->response("sin autorizcion", 401);
         }
-    }
-
-    function insert($params = null){
-        $id = $params[':token'];
-        $user = $this->authHelper->authToken();
-
-        if($user)
-        if($id == $user->id){
-            $album = $this->getData();
-            if (empty($album->nombre) || empty( $album->banda) || empty($album->genero) || empty($album->anio) || empty($album->cant_canciones) || empty($album->imgURL)) {
-                $this->view->response("Complete todos los datos", 400);
-            }else{
-                $id = $this->albumsModel->insert($album->nombre, $album->banda, $album->genero, $album->anio, $album->cant_canciones, $album->imgURL);
-                $album = $this->albumsModel->getAlbum($id);
-                return $this->view->response("Album con id: " . $id . " creado " , 201);
-            }
-        }else{
-            $this->view->response("acceso denegado", 403);
-        }
-        else{
-            $this->view->response("sin autorizcion", 401);
-        }
-    }
-
-    function modify($params = null){
-        $id = $params[':token'];
-        $user = $this->authHelper->authToken();
-        if($user)
-            if($id == $user->id){
-                    $album = $this->getData();
-                if (empty($album->nombre) || empty( $album->banda) || empty($album->genero) || empty($album->anio) || empty($album->cant_canciones) || empty($album->imgURL)) {
-                    $this->view->response("Complete todos los datos", 400);
-                }else{
-                    $this->albumsModel->modify($album->nombre, $album->banda, $album->genero, $album->anio, $album->cant_canciones, $album->imgURL, $album->id);
-                    $album = $this->albumsModel->getAlbum($album->id);
-                    return $this->view->response("Album con id: " . $album->id . " editado " , 200);
-                }
-            }else{
-                $this->view->response("acceso denegado", 403);
-            }
-        else{
-            $this->view->response("sin autorizcion", 401);
-        }
-        
     }
 
 

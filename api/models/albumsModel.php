@@ -75,5 +75,12 @@ class AlbumsModel {
     
         return $query->fetchAll(PDO::FETCH_OBJ);
     }
+
+    function getFromAlbum($album){
+        $query = $this->db->prepare('SELECT * FROM canciones WHERE id_album_fk = ?');
+        $query->execute([$album]);
+
+        return $query->fetchAll(PDO::FETCH_OBJ);
+    }
    
 }

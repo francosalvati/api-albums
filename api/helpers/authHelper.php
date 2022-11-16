@@ -56,7 +56,7 @@ class AuthHelper {
     }
 
     function isLoggedIn(){
-        $payload = $this->getToken();
+        $payload = $this->authToken();
         if(isset($payload->id))
             return true;
         else
