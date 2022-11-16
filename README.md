@@ -18,13 +18,10 @@ El endpoint de la API es: http://localhost/API/api/albums
 El endpoint de la API es: http://localhost/API/api/albums/:ID
 (get)
 El endpoint de la API es: http://localhost/API/api/albums/:ID
-
-
-
 (edit)
-El endpoint de la API es: http://localhost/API/api/albums/:ID/:token
+El endpoint de la API es: http://localhost/API/api/albums/:ID/
 (insert)
-El endpoint de la API es: http://localhost/API/api/albums/:token
+El endpoint de la API es: http://localhost/API/api/albums/
 
 :token = 1
 
